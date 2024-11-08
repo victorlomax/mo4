@@ -26,8 +26,8 @@
 .equ	T1_STOP,	(1<<WGM12)
 
 .equ	LED, PIND5		; activity LED
-.equ	STROBE, PIND5		; Output
-.equ	BUSY, PIND7		; Input
+.equ	STROBE, PIND4		; Output
+.equ	BUSY, PIND3		; Input
 
 .text
 ; =========================================================
