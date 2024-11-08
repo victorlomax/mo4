@@ -7,5 +7,8 @@ The emulation is based on 4 * ATTiny4313 microcontroller, each one devoted to an
 
 The BUSY signal is managed by a decade counter 74LS90 to speed-up the reply after a request to reset.
 
+# Schematics
+**soundpool_mo4-schematic** is based on a reverse engineering of the Soundpool MO4. **mo4emulation-schematic** is a proposed replacement.
+
 # The sources
-simulmo4.S: a simulation of the protocol and signals expected on the parallel port of Atari. For debugging purpose.
+**simulmo4.S**: a simulation of the protocol and signals expected on the parallel port of Atari. For debugging purpose.
