@@ -6,3 +6,6 @@ The Soundpool MO4 is a 4 output MIDI interface for the Atari ST, based on a CPLD
 The emulation is based on 4 * ATTiny4313 microcontroller, each one devoted to an output. The choice of ATTiny4313 (or ATTiny2313) was motivated by the presence of an USART and a 20 pins package, allowing to have a full 8 bit port.
 
 The BUSY signal is managed by a decade counter 74LS90 to speed-up the reply after a request to reset.
+
+# The sources
+simulmo4.S: a simulation of the protocol and signals expected on the parallel port of Atari. For debugging purpose.
