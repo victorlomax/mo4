@@ -11,4 +11,4 @@ The BUSY signal is managed by a decade counter 74LS90 to speed-up the reply afte
 **soundpool_mo4-schematic** is based on a reverse engineering of the Soundpool MO4. **mo4emulation-schematic** is a proposed replacement.
 
 # Sources
-**simulmo4.S**: a simulation of the protocol and signals expected on the parallel port of Atari. For debugging purpose.
+**simulmo4.S**: a simulation of the protocol and signals expected on the parallel port of Atari, for debugging purpose. Triggered by Timer 1, it simulates the reset_hardware function of the driver (4 pulses of /STROBE), followed by data written on the port B
