@@ -12,3 +12,4 @@ The BUSY signal is managed by a decade counter 74LS90 to speed-up the reply afte
 
 # Sources
 **simulmo4.S**: a simulation of the protocol and signals expected on the parallel port of Atari, for debugging purpose. Triggered by Timer 1, it simulates the reset_hardware function of the driver (4 pulses of /STROBE), followed by data written on the port B
+![chronogram](https://github.com/victorlomax/mo4/blob/main/simulmo4.png?raw=true)
