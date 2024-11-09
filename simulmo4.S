@@ -25,6 +25,9 @@
 .equ	T1_START,	(1<<WGM12)|(1<<CS10)|(1<<CS12)
 .equ	T1_STOP,	(1<<WGM12)
 
+.equ    NOTE_ON, 0x99
+.equ    NOTE_OFF, 0x89
+
 .equ	LED, PIND5		; activity LED
 .equ	STROBE, PIND4		; Output
 .equ	BUSY, PIND3		; Input
@@ -133,6 +136,8 @@ Init:	cli				; disable interrupts for now
 	LOAD    r16,    PORTD
 	sbr	r16, 	(1<<STROBE)|(1<<LED)	; STROBE is high, light up the LED
 	STORE   PORTD,  r16 
+
+	ldi	r22,	NOTE_ON
 	sei				; Allow interrupts
 ; ---------------------------------
 ; Main loop: check if there some data
@@ -141,6 +146,93 @@ Init:	cli				; disable interrupts for now
 Main:	nop					; do nothing
 	rjmp	Main				; Loop
 
+; ---------------------------------
+; Set 0x00 on port D and pulse /STROBE 4 times
+; ---------------------------------
+reset_hardware:
+	clr	r21
+	STORE	PORTB,	r21
+	rcall	pulse_strobe
+	rcall	pulse_strobe
+	rcall	pulse_strobe
+	rcall	pulse_strobe
+	ret
+
+send_data:
+	cpi	r22,	NOTE_OFF	; r22 = NOTE_OFF ?
+	ldi	r22,	NOTE_ON		; Yes -> r22 = NOTE_ON
+; ------ OUTPUT 1 ------
+	ldi	r21,	0x03
+	STORE	PORTB,	r21		; Number of bytes coming next
+	rcall	pulse_strobe
+
+	STORE	PORTB,	r22		; NOTE_ON or NOTE_OFF
+	rcall	pulse_strobe
+
+	ldi	r21,	0x24
+	STORE	PORTB,	r21		; note number
+	rcall	pulse_strobe
+
+	ldi	r21,	0x40
+	STORE	PORTB,	r21		; velocity
+	rcall	pulse_strobe
+; ------ OUTPUT 2 ------
+	ldi	r21,	0x03
+	STORE	PORTB,	r21		; Number of bytes coming next
+	rcall	pulse_strobe
+
+	STORE	PORTB,	r22		; NOTE_ON or NOTE_OFF
+	rcall	pulse_strobe
+
+	ldi	r21,	0x25
+	STORE	PORTB,	r21		; note number
+	rcall	pulse_strobe
+
+	ldi	r21,	0x40
+	STORE	PORTB,	r21		; velocity
+	rcall	pulse_strobe
+; ------ OUTPUT 3 ------
+	ldi	r21,	0x03
+	STORE	PORTB,	r21		; Number of bytes coming next
+	rcall	pulse_strobe
+
+	STORE	PORTB,	r22		; NOTE_ON or NOTE_OFF
+	rcall	pulse_strobe
+
+	ldi	r21,	0x26
+	STORE	PORTB,	r21		; note number
+	rcall	pulse_strobe
+
+	ldi	r21,	0x40
+	STORE	PORTB,	r21		; velocity
+	rcall	pulse_strobe
+; ------ OUTPUT 4 ------
+	ldi	r21,	0x03
+	STORE	PORTB,	r21		; Number of bytes coming next
+	rcall	pulse_strobe
+
+	STORE	PORTB,	r22		; NOTE_ON or NOTE_OFF
+	rcall	pulse_strobe
+
+	ldi	r21,	0x27
+	STORE	PORTB,	r21		; note number
+	rcall	pulse_strobe
+
+	ldi	r21,	0x40
+	STORE	PORTB,	r21		; velocity
+	rcall	pulse_strobe
+
+	clr	r21
+	STORE	PORTB,	r21		; port b cleanup
+	ret
+
+pulse_strobe:
+	LOAD    r16,    PORTD
+	cbr     r16,    (1<<STROBE)
+	STORE   PORTD,  r16 		; pulse low
+	sbr     r16,    (1<<STROBE)
+	STORE   PORTD,  r16 		; pulse low
+	ret
 ; =========================================================
 ; Interrupt Service Routine (ISR)
 ; =========================================================
@@ -173,14 +265,13 @@ busy:
 ; Send new data
 ; ---------------------------------
 bleep:
-	ldi	r21,	0x55
-	STORE	PORTB,	r21
-	; ---- Pulse STROBE
+	rcall	reset_hardware		; Reset hardware
+	rcall	send_data		; Send midi data
+
+	ldi	r22,	NOTE_OFF
+	
 	LOAD    r16,    PORTD
 	sbr     r16,    (1<<LED)	; light up LED
-	cbr     r16,    (1<<STROBE)
-	STORE   PORTD,  r16 		; pulse low
-	sbr     r16,    (1<<STROBE)
 	STORE   PORTD,  r16 		; pulse low
 
 	ldi	r16,	T0_START
